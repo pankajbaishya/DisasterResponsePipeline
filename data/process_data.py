@@ -1,4 +1,3 @@
-#ETL pipeline that cleans data and stores in database
 import sys
 # import libraries
 import pandas as pd
@@ -82,9 +81,19 @@ def clean_data(df):
 # ### 7. Save the clean dataset into an sqlite database.
 def save_data(df, database_filename):
     engine = create_engine('sqlite:///' + database_filename)
+    conn = engine.connect()
+    
+    #Dropping the table if already exists
+    print("Dropping the table if exists")
+    dropTableStatement = "DROP TABLE IF EXISTS Categories_Table"
+    
+    conn.execute(dropTableStatement) 
+    #conn.commit()
+    conn.close()
+    
     df.to_sql('Categories_Table', engine, index=False)  
-
-
+    
+    
 def main():
     if len(sys.argv) == 4:
 
