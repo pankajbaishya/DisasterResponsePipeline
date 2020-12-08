@@ -44,18 +44,18 @@ def index():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
-    #genre and weather_related status
+    #Genre and weather_related counts
     weather_related1 = df[df['weather_related']==1].groupby('genre').count()['message']
     weather_related0 = df[df['weather_related']==0].groupby('genre').count()['message']
     genre_names = list(weather_related1.index)
 
-    # let's calculate distribution of categories with 1
+    # Distribution of categories with 1
     cat_dist1 = df.drop(['id', 'message', 'original', 'genre'], axis = 1).sum()/len(df)
 
-    #sorting values in ascending
+    #sorting
     cat_dist1 = cat_dist1.sort_values(ascending = False)
 
-    #series of values that have 0 in categories
+    #Values that have 0 in categories
     cat_dist0 = (cat_dist1 -1) * -1
     cat_names = list(cat_dist1.index)
     
@@ -102,7 +102,7 @@ def index():
                     marker = dict(
                             color = 'rgb(200, 100, 100)'
                                 )
-                    #orientation = 'h'
+                    
                 ),
                 Bar(
                     x=cat_names,
@@ -111,7 +111,7 @@ def index():
                     marker = dict(
                             color = 'rgb(200, 200, 100)'
                                 )
-                    #orientation = 'h'
+                    
                 )
             ],
 
@@ -122,7 +122,7 @@ def index():
                 },
                 'xaxis': {
                     'title': "Categories",
-            #        'tickangle': -45
+            
                 },
                 'barmode' : 'stack'
             }
