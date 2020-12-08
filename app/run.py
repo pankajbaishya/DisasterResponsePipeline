@@ -44,6 +44,21 @@ def index():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
+    #genre and weather_related status
+    weather_related1 = df[df['weather_related']==1].groupby('genre').count()['message']
+    weather_related0 = df[df['weather_related']==0].groupby('genre').count()['message']
+    genre_names = list(weather_related1.index)
+
+    # let's calculate distribution of categories with 1
+    cat_dist1 = df.drop(['id', 'message', 'original', 'genre'], axis = 1).sum()/len(df)
+
+    #sorting values in ascending
+    cat_dist1 = cat_dist1.sort_values(ascending = False)
+
+    #series of values that have 0 in categories
+    cat_dist0 = (cat_dist1 -1) * -1
+    cat_names = list(cat_dist1.index)
+    
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
@@ -51,18 +66,65 @@ def index():
             'data': [
                 Bar(
                     x=genre_names,
-                    y=genre_counts
+                    y=weather_related1,
+                    name = 'Weather Related',
+                    marker = dict(
+                            color = 'rgb(0, 100, 100)'
+                                )
+                ),
+                Bar(
+                    x=genre_names,
+                    y= weather_related0,
+                    name = 'Not Weather Related',
+                    marker = dict(
+                            color = 'rgb(100, 100, 100)'
+                                )
                 )
             ],
 
             'layout': {
-                'title': 'Distribution of Message Genres',
+                'title': 'Distribution of messages by Genre and \'Weather Related\'',
                 'yaxis': {
-                    'title': "Count"
+                    'title': "Weather Related Count"
                 },
                 'xaxis': {
                     'title': "Genre"
-                }
+                },
+                'barmode' : 'group'
+            }
+        },
+        {
+            'data': [
+                Bar(
+                    x=cat_names,
+                    y=cat_dist1,
+                    name = 'Label 1',
+                    marker = dict(
+                            color = 'rgb(200, 100, 100)'
+                                )
+                    #orientation = 'h'
+                ),
+                Bar(
+                    x=cat_names,
+                    y=cat_dist0,
+                    name = 'Label 0',
+                    marker = dict(
+                            color = 'rgb(200, 200, 100)'
+                                )
+                    #orientation = 'h'
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of labels within categories',
+                'yaxis': {
+                    'title': "Distribution Percentage"
+                },
+                'xaxis': {
+                    'title': "Categories",
+            #        'tickangle': -45
+                },
+                'barmode' : 'stack'
             }
         }
     ]

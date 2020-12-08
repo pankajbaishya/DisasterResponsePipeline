@@ -1,4 +1,4 @@
-### Table of Contents--
+### Table of Contents
 
 1. [Installation](#installation)
 2. [Project Motivation](#motivation)
@@ -47,9 +47,21 @@ There are two jupyter notebook files where the initial code for ETL and ML pipel
 3. templates\go.html
 
 
-## Results<a name="results"></a>
+## Running the Scripts and Results<a name="results"></a>
 
-Once the model is ready, the Flask app html page is able to categorize any message to the corresponding category.
+Follow below instructions to run the scripts.
+1. Run the following commands in the project's root directory to set up your database and model.
+    - To run ETL pipeline that cleans data and stores in database
+        'python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db'
+    - To run ML pipeline that trains classifier and saves
+        'python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl'
+
+2. Run the following command in the app's directory to run your web app.
+    'python run.py'
+
+3. Go to http://0.0.0.0:3001/ or http://127.0.0.1:3001/ (in case the first one do not work).
+
+Once the model is ready, saved and app is running, the Flask app html page is able to categorize any message to the corresponding category.
 
 ## Licensing, Authors, Acknowledgements<a name="licensing"></a>
 
