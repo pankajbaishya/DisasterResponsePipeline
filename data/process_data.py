@@ -3,14 +3,15 @@ import sys
 import pandas as pd
 from sqlalchemy import create_engine
 
-# ### 1. load datasets.
-    # - Load `messages.csv` into a dataframe and inspect the first few lines.
-    # - Load `categories.csv` into a dataframe and inspect the first few lines.
-# ### 2. Merge datasets
-    # - Merge the messages and categories datasets using the common id
-    # - Assign this combined dataset to `df`, which will be cleaned in the following steps
-
 def load_data(messages_filepath, categories_filepath):
+    '''
+    Load datasets:
+        - Load messages_filepath into a dataframe and inspect the first few lines.
+        - Load categories_filepath into a dataframe and inspect the first few lines.
+    Merge datasets:
+        - Merge the messages and categories datasets using the common id.
+        - Assign this combined dataset to `df`, which will be cleaned in the following steps.
+    '''
     #print(messages_filepath)
     #print(categories_filepath)
     
@@ -28,16 +29,22 @@ def load_data(messages_filepath, categories_filepath):
     
     return df
 
-# ### 3. Split `categories` into separate category columns.
-    # - Split the values in the `categories` column on the `;` character so that each value becomes a separate column. 
-    # - Use the first row of categories dataframe to create column names for the categories data.
-# - Rename columns of `categories` with new column names.
-# ### 4. Convert category values to just numbers 0 or 1.
-    # - Iterate through the category columns in df to keep only the last character of each string (the 1 or 0).     
-# ### 5. Replace `categories` column in `df` with new category columns.
-    # - Drop the categories column from the df dataframe since it is no longer needed.
-    # - Concatenate df and categories data frames.
+
 def clean_data(df):
+    '''
+    Split `categories` into separate category columns:
+        - Split the values in the `categories` column on the `;` character so that each value becomes a separate column. 
+        - Use the first row of categories dataframe to create column names for the categories data.
+        - Rename columns of `categories` with new column names.
+    Convert category values to just numbers 0 or 1:
+        - Iterate through the category columns in df to keep only the last character of each string (the 1 or 0).     
+    Replace `categories` column in `df` with new category columns.
+        - Drop the categories column from the df dataframe since it is no longer needed.
+        - Concatenate df and categories data frames.
+    Further data cleaning:
+        - Check and drop duplicates.
+        - Check and remove category rows which are not 1 or 0 i.e. converting all the category values to binary.
+    '''
     # create a dataframe of the 36 individual category columns
     categories = df.categories.str.split(';',expand=True)
     categories.head()
@@ -76,25 +83,50 @@ def clean_data(df):
     # check number of duplicates
     print(df.duplicated().sum())
     
+    #Checking category rows which are not 1 or 0 
+    print('Categories with non binary values:')
+    for col in categories.columns:
+        if df[(df[col]!=1) & (df[col]!=0)].shape[0]>0:
+            print(col, ":", df[(df[col]!=1) & (df[col]!=0)].shape)
+    
+    #Removing category rows which are not 1 or 0 i.e. converting all the category values to binary
+    for col in categories.columns:
+        #print(col, ":", df[(df[col]==1) | (df[col]==0)].shape)
+        df = df[(df[col]==1) | (df[col]==0)]
+    
+    #Checking if there are still category rows which are not 1 or 0 
+    print('Categories with non binary values after cleaning:')
+    for col in categories.columns:
+        if df[(df[col]!=1) & (df[col]!=0)].shape[0]>0:
+            print(col, ":", df[(df[col]!=1) & (df[col]!=0)].shape)
+        
     return df
 
-# ### 7. Save the clean dataset into an sqlite database.
+
 def save_data(df, database_filename):
+    '''
+    Save the cleaned dataset into an sqlite database.
+    Also, drop the table if already exists.
+    '''
     engine = create_engine('sqlite:///' + database_filename)
-    conn = engine.connect()
+    #conn = engine.connect()
     
     #Dropping the table if already exists
-    print("Dropping the table if exists")
-    dropTableStatement = "DROP TABLE IF EXISTS Categories_Table"
+    #print("Dropping the table if exists")
+    #dropTableStatement = "DROP TABLE IF EXISTS Categories_Table"
     
-    conn.execute(dropTableStatement) 
+    #conn.execute(dropTableStatement) 
     #conn.commit()
-    conn.close()
+    #conn.close()
     
-    df.to_sql('Categories_Table', engine, index=False)  
+    df.to_sql('Categories_Table', engine, index=False, if_exists = 'replace')  
     
     
 def main():
+    '''
+    main function for the ETL script, process_data.py. 
+    The script takes the file paths of the two datasets and database, cleans the datasets, and stores the clean data into a SQLite database in the specified database file path.    
+    '''
     if len(sys.argv) == 4:
 
         messages_filepath, categories_filepath, database_filepath = sys.argv[1:]
@@ -105,6 +137,7 @@ def main():
 
         print('Cleaning data...')
         df = clean_data(df)
+        print('Shape of cleaned dataframe:', df.shape)
         
         print('Saving data...\n    DATABASE: {}'.format(database_filepath))
         save_data(df, database_filepath)

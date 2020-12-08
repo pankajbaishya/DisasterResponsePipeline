@@ -21,6 +21,13 @@ from sklearn.model_selection import GridSearchCV
 import pickle
 
 def load_data(database_filepath):
+    '''
+    Load the data:
+        - Using the database filepath, load the data in a dataframe.
+        - Split the data into messages and categories and assign to X and Y.
+        - Extract the categories column names and assign to category_names.
+        - Function return X, Y, category_names.
+    '''
     engine = create_engine('sqlite:///' + database_filepath)
     df = pd.read_sql_table('Categories_Table', engine)  
     X = df.message.values
@@ -30,6 +37,14 @@ def load_data(database_filepath):
     return X, Y, category_names
 
 def tokenize(text):
+    '''
+    Tokenization function to process text data:
+        - Remove all characters which are not alphanumeric. Convert all letters to lowercase.
+        - Apply word_tokenize from nltk.tokenize to tokeninze the words
+        - lemmatize the tokens, strip to remove any extra space.
+        - Remove the stopwords
+        - return the cleaned tokens
+    '''
     text = re.sub(r"[^a-z0-9]", " ", text.lower())
 
     tokens = word_tokenize(text)
@@ -45,6 +60,12 @@ def tokenize(text):
 
 
 def build_model():
+    '''
+    Building the model to train and create a classifier:
+        - Create a pipeline with CountVectorizer, TfidfTransformer and MultiOutputClassifier as RandomForestClassifier.
+        - To further improve the model, define set of parameters and perform a GridSearchCV to identify the best parameters.
+        - Return the model with best parameters.
+    '''
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)), 
         ('tfidf',TfidfTransformer()),
@@ -65,6 +86,11 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    '''
+    Evaluate the model created:
+        - Using the test data (X_test), predict the categories using the fitted model.
+        - Print classification report using classification_report from sklearn.metrics.
+    '''
     y_pred = model.predict(X_test)
     
     y_pred_df = pd.DataFrame (y_pred, columns = category_names)
@@ -74,11 +100,21 @@ def evaluate_model(model, X_test, Y_test, category_names):
         print(classification_report(Y_test_df.loc[:,col], y_pred_df.loc[:,col]))
 
 def save_model(model, model_filepath):
+    '''
+    Save the model under the filepath provided.
+    '''
     filename = 'finalized_model.sav'
     pickle.dump(model, open(model_filepath, 'wb'))
 
 
 def main():
+    '''
+    main function uses the functions defined earlier:
+        - Splits the data into a training set and a test set. 
+        - Creates a machine learning pipeline that uses NLTK, as well as scikit-learn's Pipeline and GridSearchCV to output a final model.
+        - Model uses the message column to predict classifications for 36 categories (multi-output classification). 
+        - Finally, it exports the model to a pickle file. 
+    '''
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))

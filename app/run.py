@@ -16,6 +16,12 @@ from sqlalchemy import create_engine
 app = Flask(__name__)
 
 def tokenize(text):
+    '''
+    Tokenization function to process text data:
+        - Apply word_tokenize from nltk.tokenize to tokeninze the words
+        - lemmatize the tokens, strip to remove any extra space.
+        - return the cleaned tokens
+    '''
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
 
@@ -38,7 +44,9 @@ model = joblib.load("../models/classifier.pkl")
 @app.route('/')
 @app.route('/index')
 def index():
-    
+    '''
+    index webpage displays cool visuals and receives user input text for model.
+    '''
     # extract data needed for visuals
     # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
@@ -140,6 +148,9 @@ def index():
 # web page that handles user query and displays model results
 @app.route('/go')
 def go():
+    '''
+    Web page that handles user query and displays model results.
+    '''
     # save user input in query
     query = request.args.get('query', '') 
 
