@@ -33,18 +33,20 @@ There are two jupyter notebook files where the initial code for ETL and ML pipel
 2. ML Pipeline Preparation.ipynb - This file consists of the machine learning portion, which splits the data into a training set and a test set. Then, it creates a machine learning pipeline that uses NLTK, as well as scikit-learn's Pipeline and GridSearchCV to output a final model that uses the message column to predict classifications for 36 categories (multi-output classification). Finally, it exports the model to a pickle file. 
 
 ### data
-1. process_data.py - Code from "ETL Pipeline Preparation.ipynb" is put in a moduler format under this file.
+1. process_data.py - Code from "ETL Pipeline Preparation.ipynb" is put in a modular format under this file.
 2. disaster_messages.csv - Consists of the real messages that were sent during disaster events.
 3. disaster_categories.csv - Consists of list of categories which the machine learning pipeline needs to categorize the events.
 4. DisasterResponse.db - This is the output database which was created by the code in process_data.py.
 
 ### models
-1. train_classifier.py - Code from "ML Pipeline Preparation.ipynb" is put in a moduler format under this file.
+1. train_classifier.py - Code from "ML Pipeline Preparation.ipynb" is put in a modular format under this file.
+Note: Unable to upload the saved model file (classifier.pkl) due to file size limitation of github.
 
 ### app
-1. run.py - This file is used to display the results in a Flask web app. This code was provided as part of the project from udacity. 
+1. run.py - This file is used to display the results in a Flask web app. Code framework was provided as part of the project from Udacity. 
 2. templates\master.html - master html file used in the Flask app.
 3. templates\go.html
+
 
 
 ## Running the Scripts and Results<a name="results"></a>
