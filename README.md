@@ -65,6 +65,11 @@ Follow below instructions to run the scripts.
 
 Once the model is ready, saved and app is running, the Flask app html page is able to categorize any message to the corresponding category.
 
+### Web App Screenshots
+![Visualization of Data](https://github.com/pankajbaishya/DisasterResponsePipeline/blob/main/WebApp_Screenshot1.png)
+
+![Message Categorization](https://github.com/pankajbaishya/DisasterResponsePipeline/blob/main/WebApp_Screenshot2.png)
+
 ## Licensing, Authors, Acknowledgements<a name="licensing"></a>
 
 This app is created as part of the Udacity Data Scientist Nanodegree. I would like to give credit to udacity for the basic framework of the solution. The data used was originally sourced by Udacity from Figure Eight.
